@@ -1,0 +1,47 @@
+COMPARE THE EXPECTED AND ACTUAL EXECUTION:
+
+from decimal import Decimal
+from time import perf_counter
+
+amounts = ["33.40", "27.80", "30.00", "283.90"]
+
+
+def float_total(items):
+    """Calculate a total using float."""
+    total = 0.0
+    for amount in items:
+        total += float(amount)
+    return total
+
+
+def decimal_total(items):
+    """Calculate a total using Decimal."""
+    total = Decimal("0.00")
+    for amount in items:
+        total += Decimal(amount)
+    return total
+
+
+for n in [300, 6000, 150000]:
+    payments = amounts * (n // len(amounts))
+    payments += amounts[:n % len(amounts)]
+
+    start = perf_counter()
+    f_total = float_total(payments)
+    float_time = perf_counter() - start
+
+    start = perf_counter()
+    d_total = decimal_total(payments)
+    decimal_time = perf_counter() - start
+
+    print(f"\nPayments: {n}")
+    print(f"Float total:   {f_total:.2f}")
+    print(f"Decimal total: {d_total:.2f}")
+    print(f"Difference:    {abs(Decimal(str(f_total)) - d_total)}")
+    print(f"Float time:    {float_time:.6f} seconds")
+    print(f"Decimal time:  {decimal_time:.6f} seconds")
+
+    AFTER RUNNING THE SCRIPT:
+
+    PAYMENTS:300
+    

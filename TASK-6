@@ -1,0 +1,68 @@
+ORGANISE LOGIC INTO FUNCTIONS:
+
+from decimal import Decimal, ROUND_HALF_UP
+
+BASE_RATE = Decimal("30.00")
+FAT_STEP_VALUE = Decimal("0.40")
+SNF_STEP_VALUE = Decimal("0.30")
+STEP_SIZE = Decimal("0.1")
+STANDARD_FAT = Decimal("3.5")
+STANDARD_SNF = Decimal("8.5")
+CENT = Decimal("0.01")
+
+
+def round_money(value):
+    """Round a monetary value to two decimal places."""
+    return value.quantize(CENT, rounding=ROUND_HALF_UP)
+
+
+def rate_per_litre(fat, snf):
+    """Calculate the rate per litre from fat and SNF percentages."""
+    fat_steps = int(
+        ((fat - STANDARD_FAT) / STEP_SIZE).to_integral_value(
+            rounding=ROUND_HALF_UP
+        )
+    )
+    snf_steps = int(
+        ((snf - STANDARD_SNF) / STEP_SIZE).to_integral_value(
+            rounding=ROUND_HALF_UP
+        )
+    )
+    rate = (
+        BASE_RATE
+        + fat_steps * FAT_STEP_VALUE
+        + snf_steps * SNF_STEP_VALUE
+    )
+    return round_money(rate)
+
+
+def payout(litres, fat, snf):
+    """Calculate the amount payable for a milk entry."""
+    return round_money(litres * rate_per_litre(fat, snf))
+
+
+def ten_day_total(payments):
+    """Return the sum of the individual payments."""
+    return round_money(sum(payments, Decimal("0.00")))
+
+
+rate = rate_per_litre(Decimal("4.2"), Decimal("8.7"))
+amount = payout(Decimal("8.5"), Decimal("4.2"), Decimal("8.7"))
+
+print(f"Rate: Rs {rate:.2f}")
+print(f"Payment: Rs {amount:.2f}")
+print(f"Ten-day total: Rs {ten_day_total([amount]):.2f}")
+
+EXPECTED OUTPUT:
+
+Rate: Rs 33.40
+Payment: Rs 283.90
+Ten-day total: Rs 283.90
+
+EXPLANATION:
+
+A function accepts inputs through parameters.
+return sends a value back to the caller; print() only displays a value.
+Local variables exist within the function.
+Global constants can be read inside a function. Avoid changing global rate settings from inside calculation functions.
+Docstrings describe each function's purpose

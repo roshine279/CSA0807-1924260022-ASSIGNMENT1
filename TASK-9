@@ -1,0 +1,44 @@
+IMPLEMENT AND TEST:
+
+from decimal import Decimal
+from milkrate import rate_per_litre, payout
+
+
+def validate(litres, fat, snf):
+    """Check the essential input rules."""
+    return (
+        litres > 0
+        and Decimal("2.0") <= fat <= Decimal("7.0")
+        and snf >= 0
+    )
+
+
+tests = [
+    ("Standard", "10", "3.5", "8.5", "300.00"),
+    ("Fat above", "8.5", "4.2", "8.7", "283.90"),
+    ("Fat below", "12", "3.1", "8.3", "333.60"),
+    ("Lowest fat", "1", "2.0", "8.5", "240.00"),
+    ("Highest fat", "1", "7.0", "8.5", "440.00"),
+]
+
+for name, litres, fat, snf, expected in tests:
+    litres = Decimal(litres)
+    fat = Decimal(fat)
+    snf = Decimal(snf)
+
+    actual = payout(litres, fat, snf)
+    assert actual == Decimal(expected), (
+        name, actual, expected
+    )
+    print(f"{name:12} expected={expected} actual={actual} PASS")
+
+assert not validate(Decimal("-1"), Decimal("3.5"), Decimal("8.5"))
+assert not validate(Decimal("1"), Decimal("7.1"), Decimal("8.5"))
+
+try:
+    Decimal("eight")
+except Exception as error:
+    print("Invalid text test:", type(error).__name__)
+
+print("All tests completed.")
+

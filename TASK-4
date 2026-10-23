@@ -1,0 +1,26 @@
+EXPRESSIONS TO USE:
+
+fat_steps = round((fat - STANDARD_FAT) / STEP_SIZE)
+snf_steps = round((snf - STANDARD_SNF) / STEP_SIZE)
+
+rate = (
+    BASE_RATE
+    + fat_steps * FAT_STEP_VALUE
+    + snf_steps * SNF_STEP_VALUE
+)
+
+amount = round(litres * rate, 2)
+
+THREE EXPRESSIONS:
+
+print((4.2 - 3.5) / 0.1)
+print(round(2.5))
+print(round(-2.5))
+print(int(-2.9))
+
+TYPICAL OUTPUT:
+
+7.000000000000001
+2
+-2
+-2

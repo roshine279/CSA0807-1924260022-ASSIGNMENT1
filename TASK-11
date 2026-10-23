@@ -1,0 +1,6 @@
+RECOMMEND AND DEFEND THE FINAL DESIGN:
+
+The design is suitable for a centre with 300 farmers and can process 6,000 or 150,000 entries in linear time, , provided that records are processed efficiently. For district-union scale, the system should additionally include persistent storage, audit logs, access control, backup and reconciliation with the bank statement.
+The limitations are that rate-step rules, SNF limits, sensor precision and rounding policy must be confirmed with the co-operative. The program must not assume that technically valid numbers always represent valid milk measurements.
+Alternative: store rates in a JSON file
+Instead of editing Python code after each rate revision, store the rate card in a JSON configuration file and read it when the program starts.

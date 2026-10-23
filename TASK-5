@@ -1,0 +1,35 @@
+READ AND CONVERT INPUT:
+
+def read_positive_litres():
+    """Read a positive quantity of milk in litres."""
+    while True:
+        text = input("Enter litres: ").strip()
+
+        try:
+            litres = float(text)
+        except ValueError:
+            print("Invalid input. Enter a number such as 8.5.")
+            continue
+
+        if litres <= 0:
+            print("Litres must be greater than zero.")
+            continue
+
+        return litres
+
+
+litres = read_positive_litres()
+print(f"Quantity: {litres:8.2f} L")
+
+EXAMPLES:
+
+Enter litres: eight
+Invalid input. Enter a number such as 8.5.
+Enter litres: 8.5
+Quantity:     8.50 L
+
+input() always returns a string. float() converts valid numeric strings to floating-point values.
+"8,5" is rejected by float() because Python expects a decimal point.
+"eight" is rejected.
+" 8.5 " works because whitespace around a numeric string is ignored by float().
+For a payment application, consider using Decimal(text) instead of float(text) for the final implementation.

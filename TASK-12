@@ -1,0 +1,142 @@
+RE-EVALUATE AND ADAPT THE DESIGN:
+
+Farmers supplying more than 500 litres in ten days receive an additional ₹0.50 per litre.
+The original SNF adjustment remains ₹0.30 per 0.1% unless the co-operative announces a revision.
+
+IMPACT ANALYSIS:
+
+Rate constants must support multiple seasons.
+Fat and SNF step calculations must account for two-decimal readings.
+The payment function must apply the appropriate season.
+A ten-day aggregation function must calculate each farmer's total litres.
+A bonus function must add ₹0.50 per litre if the farmer's ten-day quantity is greater than 500 litres.
+For example, a fat reading of 4.27% produces:
+If the agreed policy rounds to the nearest whole 0.1% step, the fat step count becomes 8. A reading of 4.25% is a halfway case, so the co-operative must explicitly define how such cases are rounded.
+
+IMPLEMENTING THE REVISED DESIGN:
+
+from decimal import Decimal, ROUND_HALF_UP
+
+CENT = Decimal("0.01")
+STEP_SIZE = Decimal("0.1")
+STANDARD_FAT = Decimal("3.5")
+STANDARD_SNF = Decimal("8.5")
+SNF_STEP_VALUE = Decimal("0.30")
+BONUS_THRESHOLD = Decimal("500")
+BONUS_PER_LITRE = Decimal("0.50")
+
+RATE_CARDS = {
+    "regular": {
+        "base": Decimal("30.00"),
+        "fat": Decimal("0.40"),
+    },
+    "april_june": {
+        "base": Decimal("32.00"),
+        "fat": Decimal("0.45"),
+    },
+}
+
+
+def money(value):
+    """Round a monetary value to two decimal places."""
+    return value.quantize(CENT, rounding=ROUND_HALF_UP)
+
+
+def nearest_step(value):
+    """Round a step count to the nearest integer, half away from zero."""
+    return int(
+        value.to_integral_value(rounding=ROUND_HALF_UP)
+    )
+
+
+def rate_per_litre(fat, snf, season):
+    """Calculate the milk rate for the selected season."""
+    card = RATE_CARDS[season]
+
+    fat_steps = nearest_step(
+        (fat - STANDARD_FAT) / STEP_SIZE
+    )
+    snf_steps = nearest_step(
+        (snf - STANDARD_SNF) / STEP_SIZE
+    )
+
+    rate = (
+        card["base"]
+        + Decimal(fat_steps) * card["fat"]
+        + Decimal(snf_steps) * SNF_STEP_VALUE
+    )
+    return money(rate)
+
+
+def base_payment(litres, fat, snf, season):
+    """Calculate payment before the ten-day bonus."""
+    return money(litres * rate_per_litre(fat, snf, season))
+
+
+def bonus_payment(total_litres):
+    """Return the bonus when ten-day supply exceeds 500 litres."""
+    if total_litres > BONUS_THRESHOLD:
+        return money(total_litres * BONUS_PER_LITRE)
+    return Decimal("0.00")
+
+
+def ten_day_payment(entries, season):
+    """Calculate the ten-day payment and bonus for one farmer.
+
+    Each entry is a tuple: (litres, fat, snf).
+    """
+    total_litres = sum(
+        (entry[0] for entry in entries),
+        Decimal("0")
+    )
+
+    total_base = sum(
+        (
+            base_payment(litres, fat, snf, season)
+            for litres, fat, snf in entries
+        ),
+        Decimal("0.00")
+    )
+
+    bonus = bonus_payment(total_litres)
+    return total_litres, money(total_base + bonus), bonus
+
+
+if __name__ == "__main__":
+    sample_entries = [
+        (Decimal("300"), Decimal("4.27"), Decimal("8.63")),
+        (Decimal("250"), Decimal("3.85"), Decimal("8.55")),
+    ]
+
+    for season in ("regular", "april_june"):
+        litres, total, bonus = ten_day_payment(
+            sample_entries, season
+        )
+        print(
+            f"{season:12} litres={litres} "
+            f"bonus=Rs {bonus:.2f} total=Rs {total:.2f}"
+        )
+
+        EVIDENCE BASED DEFENCE:
+
+        from decimal import Decimal
+from seasonal_milkrate import (
+    bonus_payment,
+    rate_per_litre,
+)
+
+assert rate_per_litre(
+    Decimal("3.5"), Decimal("8.5"), "regular"
+) == Decimal("30.00")
+
+assert rate_per_litre(
+    Decimal("3.5"), Decimal("8.5"), "april_june"
+) == Decimal("32.00")
+
+assert bonus_payment(Decimal("500")) == Decimal("0.00")
+assert bonus_payment(Decimal("500.01")) == Decimal("250.01")
+assert bonus_payment(Decimal("550")) == Decimal("275.00")
+
+print("Season and bonus tests passed.")
+
+One important implementation detail: this version sums the rounded base payment for each entry and then adds the bonus. If the co-operative instead requires the entire ten-day base payment to be rounded only once, the aggregation function must be changed to follow that policy.

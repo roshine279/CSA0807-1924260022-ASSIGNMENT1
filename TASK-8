@@ -1,0 +1,32 @@
+PLAN THE ALGORITHM:
+
+PSEUDOCODE:
+
+BEGIN
+
+    SET total_payment = 0
+
+    FOR each farmer entry
+        READ farmer_id, litres, fat, snf, shift
+
+        IF input is invalid
+            DISPLAY error message
+            CONTINUE to next entry
+        END IF
+
+        CALCULATE fat_steps
+        CALCULATE snf_steps
+
+        CALCULATE rate
+        CALCULATE payment
+        ROUND payment to two decimal places
+
+        ADD payment to total_payment
+
+        DISPLAY farmer ID, rate and payment
+    END FOR
+
+    DISPLAY ten-day total
+
+END
+

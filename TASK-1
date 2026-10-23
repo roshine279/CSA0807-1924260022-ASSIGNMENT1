@@ -1,0 +1,32 @@
+Value Python type Reason
+Farmer ID str Can contain letters or leading zeros
+Quantity in litres Decimal Supports exact decimal input
+Fat percentage Decimal Measurements can contain decimals
+SNF percentage Decimal Measurements can contain decimals
+Shift str For example, Morning or Evening
+Rate per litre Decimal Currency-related calculation
+Individual payment Decimal Must be accurate to the paisa
+Ten-day total Decimal or integer paise Represents the amount payable
+B. Constants
+
+input 
+
+entries = [
+    ("F001", 10, 3.5, 8.5),
+    ("F002", 8.5, 4.2, 8.7),
+]
+
+Validation rules:
+
+Farmer ID must not be empty.
+Litres must be greater than zero.
+Fat must be between 2.0% and 7.0%, inclusive.
+SNF must be within a documented acceptable range. The original assignment does not specify its limits, so the co-operative must define them before deployment.
+Shift must be Morning or Evening.
+Text entered where a number is required must be rejected with a useful message.
+Payment must be rounded according to the defined currency policy.
+
+Alternative design and complexity:
+
+Separate-variable approach: litres1, fat1, snf1, litres2, fat2, snf2, and so on.
+This requires three variables per entry and becomes difficult to manage for thousands of farmers.

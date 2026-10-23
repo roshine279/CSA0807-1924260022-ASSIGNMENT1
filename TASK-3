@@ -1,0 +1,31 @@
+VARIABLES AND CONSTANTS:
+
+BASE_RATE = 30.00
+STANDARD_FAT = 3.5
+STANDARD_SNF = 8.5
+FAT_STEP_VALUE = 0.40
+SNF_STEP_VALUE = 0.30
+STEP_SIZE = 0.1
+
+litres = 10
+litres = "ten"
+
+print(litres)
+print(type(litres))
+
+EXPECTED OUTPUT:
+
+ten
+<class 'str'>
+
+ALTERNATIVE CONCEPT:
+
+rate = 30 + fat_steps * 0.40 + snf_steps * 0.30
+
+A DICTIONARY RATE CARD:
+
+RATE_CARD = {
+    "base": 30.00,
+    "fat": 0.40,
+    "snf": 0.30,
+}
